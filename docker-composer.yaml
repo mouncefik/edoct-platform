@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/edoct
+      - SPRING_DATASOURCE_USERNAME=edoct
+      - SPRING_DATASOURCE_PASSWORD=edoct@2025
+      - spring.jpa.show-sql=true
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+      - spring.jpa.properties.hibernate.format_sql=true
+      - jwt.secret=5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437
+      - jwt.expiration=86400000
+    depends_on:
+      - db
+    networks:
+      - edoct-network
+
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=edoct
+      - POSTGRES_USER=edoct
+      - POSTGRES_PASSWORD=edoct@2025
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - edoct-network
+
+volumes:
+  postgres-data:
+
+networks:
+  edoct-network:
+    driver: bridge
